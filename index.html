@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <style>
+        /* Ensure the image is absolutely positioned */
+        .movingImage {
+          position: absolute;
+          top: 50px;
+          left: -1000px; /*hopefully out of view */
+        }
+
+        .movingImage:hover{
+            animation: fade 1s forwards;
+        }
+
+        @keyframes fade {
+            from{ opacity: 1; }
+            to { opacity: 0.5;}
+        }
+
+        body{
+            overflow: hidden;
+        }
+      </style>
+</head>
+
+<body>
+
+    
+
+
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32">
+                <use xlink:href="#bootstrap"></use>
+            </svg>
+            <span class="fs-4">Simple header</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+        </ul>
+    </header>
+    <img class="movingImage" src="./img/cloud3.png" alt="Moving Image">
+
+    <main class="p-5">
+        <div class="card border-0 shadow-lg">
+            <img src="./img/sky-414199_1280.jpg" class="card-img" alt="...">
+            <div class="d-flex flex-column justify-content-center card-img-overlay text-center">
+                <h6>The High Market Co</h6>
+                <h1 class="display-1">Cloud Purchasing</h1>
+                <p class="h5">Some random text about buying our clouds Lorem ipsum dolor sit amet consectetur
+                    adipisicing elit. A at nam minus excepturi vitae perferendis voluptatem laboriosam consequatur fuga
+                    ipsum saepe, dolores harum vel tempore! Asperiores error at vitae ullam..</p>
+                <div>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary">Left</button>
+                        <button type="button" class="btn btn-primary">Middle</button>
+                        <button type="button" class="btn btn-primary">Right</button>
+                    </div>
+                </div>
+                <p class="card-text"><small>Image by <a
+                            href="https://pixabay.com/users/giografiche-377204/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=414199">giografiche</a>
+                        from <a
+                            href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=414199">Pixabay</a></small>
+                </p>
+
+            </div>
+        </div>
+    </main>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+                        <use xlink:href="#twitter"></use>
+                    </svg></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+                        <use xlink:href="#instagram"></use>
+                    </svg></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
+                        <use xlink:href="#facebook"></use>
+                    </svg></a></li>
+        </ul>
+    </footer>
+
+    <!-- Moving Clouds -->
+    <img class="movingImage" src="./img/cloud4.png" alt="Moving Image">
+    <img class="movingImage" src="./img/cloud2.png" alt="Moving Image">
+    <img class="movingImage" src="./img/cloud4.png" alt="Moving Image">
+
+
+
+    <script>
+        class Cloud {
+            //wieght of y position when new y position is calcuated
+            static #yWeight = 0.65;
+
+            speed = Math.ceil(3 * Math.random()) + 1; // Pixels per animation frame (min 2, max 5)
+            waitTime = 1000 + 4000 * Math.random() ;  // 1-5 seconds to wait before a new pass
+
+            // A variable to hold the animation interval so we can clear it
+            animationInterval;
+
+            constructor(element){        
+                // store element
+                element.style.left = -element.width;
+                this.movingImage = element;
+                
+                
+            }
+
+            // Create the animation function
+            #moveImage() {
+                // Move the image to the right by `speed` pixels
+                this.xPos += this.speed;
+                this.movingImage.style.left = this.xPos + "px";
+
+                // If the image has moved beyond the right edge of the window:
+                if (this.xPos > window.innerWidth) {
+                   
+                    this.reset()
+                    // Wait for `waitTime` then start a new animation pass
+                    setTimeout(() => {
+                        this.start();// roughly 60fps
+                    }, this.waitTime);
+                }
+            }
+
+            reset(){
+                // Reset xPos so it starts off-screen again
+                this.xPos = -this.movingImage.width;
+
+                // Stop the current animation
+                clearInterval(this.animationInterval);
+
+                // set new Y position with calcuated weight
+                this.movingImage.style.top = ( window.innerHeight * Math.random() * Cloud.#yWeight)+"px";
+            }
+
+            //function to start animation
+            start(){
+
+                // Reset xPos so it starts off-screen again
+                this.xPos = -this.movingImage.width;
+
+                //move cloud out of view
+                this.movingImage.style.left = this.xPos + "px";
+
+                // set new Y position with calcuated weight
+                this.movingImage.style.top = ( window.innerHeight * Math.random() * Cloud.#yWeight)+"px";
+                
+                
+                setTimeout(() => {
+                    // Start the animation
+                    this.animationInterval = setInterval(this.#moveImage.bind(this), 16); // 16ms ~ 60fps
+                }, 12345 * Math.random() ); // wait of 4-9seconds
+            }
+        }
+
+        // Get a reference to the image
+        const movingImage = document.getElementsByClassName("movingImage");
+
+        //iterate over the amount of clouds and make them all animate
+        for (let index = 0; index < movingImage.length; index++) {
+            //fetch cloud element and turn into cloud object
+            let newCloud = new Cloud(movingImage.item(index)); 
+            //start animation
+            newCloud.start();
+            console.log(index);
+            
+        }
+
+        
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
